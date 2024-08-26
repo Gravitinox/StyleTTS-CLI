@@ -18,7 +18,7 @@ from modules.tortoise_dataset_tools.dataset_whisper_tools.combine_folders import
 SETTINGS_FILE_PATH = "Configs/generate_settings.yaml"
 GENERATE_SETTINGS = {}
 TRAINING_DIR = "training"
-BASE_CONFIG_FILE_PATH = r"Configs\template_config_ft.yml"
+BASE_CONFIG_FILE_PATH = r"Configs/template_config_ft.yml"
 WHISPER_MODELS = ["tiny", "base", "small", "medium", "large", "large-v1", "large-v2", "large-v3"]
 VALID_AUDIO_EXT = [
     ".mp3",
