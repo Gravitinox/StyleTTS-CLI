@@ -65,13 +65,13 @@ def load_all_models(model_path):
 def get_file_path(root_path, voice, file_extension, error_message):
     model_path = os.path.join(root_path, voice)
     if not os.path.exists(model_path):
-        raise gr.Error(f'No {file_extension} located in "{root_path}" folder')
+        print(f'No {file_extension} located in "{root_path}" folder')
 
     for file in os.listdir(model_path):
         if file.endswith(file_extension):
             return os.path.join(model_path, file)
     
-    raise gr.Error(error_message)
+    print(error_message)
 
 def get_model_configuration(model_path):
     base_directory, _ = os.path.split(model_path)
@@ -80,7 +80,7 @@ def get_model_configuration(model_path):
             configuration_path = os.path.join(base_directory, file)
             return configuration_path
     
-    raise gr.Error("No configuration file found in the model folder")
+    print("No configuration file found in the model folder")
     
 def load_voice_model(voice):
     return get_file_path(root_path="models", voice=voice, file_extension=".pth", error_message="No TTS model found in specified location")
@@ -214,7 +214,7 @@ def load_settings():
             "beta": 0.7,
             "diffusion_steps": 30,
             "embedding_scale": 1.0,
-            "voice_model" : "models\pretrain_base_1\epochs_2nd_00020.pth"
+            "voice_model" : "models/pretrain_base_1/epochs_2nd_00020.pth"
         }
         return settings_list
 
@@ -261,7 +261,7 @@ def load_whisper_model(language=None, model_name=None, progress=None):
         device = "cpu"
         device_index = 0
         compute_type = "int8"
-        # raise gr.Error("Non-Nvidia GPU detected, or CUDA not available")
+        # print("Non-Nvidia GPU detected, or CUDA not available")
     whisper_model = whisperx.load_model(model_name, device, device_index, compute_type, download_root="whisper_models")
     try:
         whisper_model = whisperx.load_model(model_name, device, download_root="whisper_models", compute_type="float16")
@@ -300,7 +300,7 @@ def transcribe_and_process(voice, language, chunk_size, continuation_directory, 
     
     for item in items_to_move:
         if os.path.exists(os.path.join(training_folder, os.path.basename(item))):
-            raise gr.Error(f'Remove ~~train.txt ~~validation.txt ~~audio(folder) from "./training/{voice}" before trying to transcribe a new dataset. Or click the "Archive Existing" button')
+            print(f'Remove ~~train.txt ~~validation.txt ~~audio(folder) from "./training/{voice}" before trying to transcribe a new dataset. Or click the "Archive Existing" button')
             
     if continuation_directory:
         dataset_dir = os.path.join(processed_folder, continuation_directory)
@@ -359,7 +359,7 @@ def transcribe_and_process(voice, language, chunk_size, continuation_directory, 
         try:
             c2mp3.process_folder(original_dir, large_file_num_processes)
         except:
-            raise gr.Error('No files found in the voice folder specified, make sure it is not empty.  If you interrupted the process, the files may be in the "original_files" folder')
+            print('No files found in the voice folder specified, make sure it is not empty.  If you interrupted the process, the files may be in the "original_files" folder')
         
         # Hacky way to move the files back into the main voice folder
         for item in os.listdir(os.path.join(original_dir, "converted")):
@@ -407,7 +407,7 @@ def transcribe_and_process(voice, language, chunk_size, continuation_directory, 
                 shutil.move(item, training_folder)
         shutil.rmtree(dataset_dir)
     except Exception as e:
-        raise gr.Error(e)
+        print(e)
         
     print("Transcription and processing completed successfully!")
     print(time.strftime("Transcription processing time: %H:%M:%S", time.gmtime(time.time() - time_transcribe)))
@@ -417,12 +417,9 @@ def transcribe_and_process(voice, language, chunk_size, continuation_directory, 
 def phonemize_files(voice):
     print("Starting phonemization...")
     training_root = get_training_folder(voice)
+    print("training_root:", training_root)
     train_text_path = os.path.join(training_root, "train.txt")
     print("train_text_path:", train_text_path)
-    file1 = open(train_text_path, "r")
-    print(file1.readlines())
-    print()
-    file1.close()
     train_opt_path = os.path.join(training_root, "train_phoneme.txt")
     print("train_opt_path:", train_opt_path)
     validation_text_path = os.path.join(training_root, "validation.txt")
